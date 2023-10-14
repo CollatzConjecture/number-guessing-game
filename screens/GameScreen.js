@@ -25,36 +25,39 @@ function GameScreen({ userNumber }) {
     maxBoundary,
     userNumber
   );
-  const [curretGuess, setCurrentGuess] = useState(initialGuess);
+
+  const [currentGuess, setCurrentGuess] = useState(initialGuess);
 
   function nextGuessHandler(direction) {
     if (
-      (direction === "lower" && setCurrentGuess < userNumber) ||
-      (direction === "greater" && setCurrentGuess > userNumber)
+      (direction === "lower" && currentGuess < userNumber) ||
+      (direction === "greater" && currentGuess > userNumber)
     ) {
       Alert.alert("Don't lie!", "You know that this is wrong...", [
-        {text: "Sorry!", style: 'cancel' },
+        { text: "Sorry!", style: "cancel" },
       ]);
       return;
     }
 
     if (direction === "lower") {
-      maxBoundary = setCurrentGuess;
+      maxBoundary = currentGuess - 1;
     } else {
-      minBoundary = setCurrentGuess + 1;
+      minBoundary = currentGuess + 1;
     }
+
     const newRndNumber = generateRandomBetween(
       minBoundary,
       maxBoundary,
-      curretGuess
+      currentGuess
     );
+
     setCurrentGuess(newRndNumber);
   }
 
   return (
     <View style={styles.screen}>
       <Title>Opponent's Guess</Title>
-      <NumberContainer>{curretGuess}</NumberContainer>
+      <NumberContainer>{currentGuess}</NumberContainer>
       <View>
         <Text>Higher or lower?</Text>
         <View>
@@ -66,7 +69,7 @@ function GameScreen({ userNumber }) {
           </PrimaryButton>
         </View>
       </View>
-      <View>LOG ROUNDS</View>
+      <Text>LOG ROUNDS</Text>
     </View>
   );
 }

@@ -1,20 +1,23 @@
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, Text } from "react-native";
 import Title from "../components/ui/Title";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
-function GameOverScreen() {
+function GameOverScreen({ roundsNumber, userNumber, onStartNewGame }) {
   return (
     <View style={styles.rootContainer}>
       <Title>GAME OVER!</Title>
       <View style={styles.imageContainer}>
         <Image
           style={styles.image}
-          source={require("../assets/images/success.png")}
+          source={require('../assets/images/success.png')}
         />
       </View>
-      <View>
-
-      </View>
+      <Text style={styles.summaryText}>
+        Your phone needed <Text style={styles.highlight}>{roundsNumber}</Text>{' '}
+        rounds to guess the number{' '}
+        <Text style={styles.highlight}>{userNumber}</Text>.
+      </Text>
+      <PrimaryButton onPress={onStartNewGame}>Start New Game</PrimaryButton>
     </View>
   );
 }

@@ -1,37 +1,26 @@
-import { useState } from "react";
-import { StyleSheet, ImageBackground, SafeAreaView } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { useState } from 'react';
+import { StyleSheet, ImageBackground, SafeAreaView } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useFonts } from 'expo-font';
+import AppLoading from 'expo-app-loading';
 
-import StartGameScreen from "./screens/StartGameScreen";
-import GameScreen from "./screens/GameScreen";
-import Colors from "./contants/color";
-import GameOverScreen from "./screens/GameOverScreen";
-import * as Font from 'expo-font';
-import AppLoading from "expo-app-loading";
+import StartGameScreen from './screens/StartGameScreen';
+import GameScreen from './screens/GameScreen';
+import GameOverScreen from './screens/GameOverScreen';
+import Colors from './constants/colors';
 
 export default function App() {
   const [userNumber, setUserNumber] = useState();
   const [gameIsOver, setGameIsOver] = useState(true);
+  const [guessRounds, setGuessRounds] = useState(0);
 
-  const customFonts = {
+  const [fontsLoaded] = useFonts({
     'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
     'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
-  };
-
-  const loadFontsAsync = async () => {
-    await Font.loadAsync(customFonts);
-  };
-
-  const [fontsLoaded, setFontsLoaded] = useState(false);
+  });
 
   if (!fontsLoaded) {
-    return (
-      <AppLoading
-        startAsync={loadFontsAsync}
-        onFinish={() => setFontsLoaded(true)}
-        onError={(error) => console.error(error)}
-      />
-    );
+    return <AppLoading />;
   }
 
   function pickedNumberHandler(pickedNumber) {
@@ -39,24 +28,41 @@ export default function App() {
     setGameIsOver(false);
   }
 
-  function gameOverHandler() {
+  function gameOverHandler(numberOfRounds) {
     setGameIsOver(true);
+    setGuessRounds(numberOfRounds);
+  }
+
+  function startNewGameHandler() {
+    setUserNumber(null);
+    setGuessRounds(0);
   }
 
   let screen = <StartGameScreen onPickNumber={pickedNumberHandler} />;
 
   if (userNumber) {
-    screen = <GameScreen userNumber={userNumber} onGameOver={gameOverHandler} />;
+    screen = (
+      <GameScreen userNumber={userNumber} onGameOver={gameOverHandler} />
+    );
   }
 
-  if(gameIsOver && userNumber) {
-    screen = <GameOverScreen />
+  if (gameIsOver && userNumber) {
+    screen = (
+      <GameOverScreen
+        userNumber={userNumber}
+        roundsNumber={guessRounds}
+        onStartNewGame={startNewGameHandler}
+      />
+    );
   }
 
   return (
-    <LinearGradient colors={[Colors.primary700, "#cbf3f0"]} style={styles.rootScreen}>
+    <LinearGradient
+      colors={[Colors.primary700, Colors.accent500]}
+      style={styles.rootScreen}
+    >
       <ImageBackground
-        source={require("./assets/images/background.png")}
+        source={require('./assets/images/background.png')}
         resizeMode="cover"
         style={styles.rootScreen}
         imageStyle={styles.backgroundImage}
